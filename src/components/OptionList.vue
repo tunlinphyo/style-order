@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import { useCourseStore } from '@/stores/courses'
-import { useDesignStore } from '@/stores/designs'
 import { useOptionsStore } from '@/stores/options'
 import { useSelectedStore } from '@/stores/selected'
-import { onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 
 const store = useOptionsStore()
-const design = useDesignStore()
 const selected = useSelectedStore()
-const course = useCourseStore()
+const listRef = useTemplateRef<HTMLLIElement>('options')
 
 const name = ref('')
+const mackinWidth = ref<number | null>(null)
 
 onMounted(() => {
   scrollToTop()
   // store.getCustomOptions()
   if (selected.selected.options[44]) {
     name.value = String(selected.selected.options[44])
+  }
+  if (selected.selected.options[63]) {
+    mackinWidth.value = Number(selected.selected.options[63])
   }
 
   Object.entries(selected.selected).forEach(([key, value]) => {
@@ -25,6 +26,28 @@ onMounted(() => {
     }
   })
 })
+
+watch(
+  () => store.errors,
+  async () => {
+    console.log('ERROR_CAHNGE')
+    await nextTick()
+    if (listRef.value) {
+      const textInput = listRef.value.querySelector('#textInput')
+      console.log(document.activeElement, textInput)
+      if (document.activeElement == textInput) return
+      const error = listRef.value.querySelector('.error-item')
+      console.log('ERROR_ELEM', listRef.value, error)
+      if (error) {
+        error.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest',
+        })
+      }
+    }
+  }
+)
 
 watch(name, nextVal => {
   if (nextVal) {
@@ -52,6 +75,25 @@ watch(
   }
 )
 
+watch(mackinWidth, nextVal => {
+  if (nextVal) {
+    selected.selected.options[63] = nextVal
+  } else {
+    delete selected.selected.options[63]
+  }
+})
+
+watch(
+  () => selected.selected.options[25],
+  nextVal => {
+    if (nextVal == 2) {
+      mackinWidth.value = 2.5
+    } else {
+      mackinWidth.value = null
+    }
+  }
+)
+
 function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -62,41 +104,43 @@ function scrollToTop() {
 </script>
 
 <template>
-  <div class="options">
+  <div class="options" ref="options">
     <ul class="scroll-container list-reset">
       <li
-        v-for="item in design.getItems(
-          course.getCourse(selected.selected.course)
-        )"
-        :key="item.id"
-        :class="`type-${item.id}`"
+        v-for="data in store.getOptionList()"
+        :key="data.item.id"
+        :class="`type-${data.item.id}`"
       >
-        <h3 class="sticky-title">{{ item.name }}</h3>
+        <h3 class="sticky-title">{{ data.item.name }}</h3>
         <ul class="list-reset option-list">
           <li
             class="option-grid"
-            v-for="option in store.getOptions(item.type)"
+            v-for="option in data.options"
             :key="option.id"
           >
-            <div class="grid-start">
-              <h4>
-                {{ option.name }}
-              </h4>
+            <div
+              class="grid-start"
+              :class="{
+                'error-item':
+                  store.isError(option.id) ||
+                  (option.id == 45 && store.isError(46)),
+              }"
+            >
+              <h4>{{ option.name }}</h4>
               <figure v-if="option.image" class="figure-reset option-image">
                 <img
                   :src="store.getImageUrl(option.image)"
                   alt="Option Image"
                 />
               </figure>
-              <p>
-                {{ option.id }} | {{ option.apiField }} ||
-                {{ option.optionType }} | {{ option.type }}
-              </p>
+              <!-- <p>
+                {{ option.id }}
+              </p> -->
               <p class="option-detail" v-if="option.detail">
                 {{ option.detail }}
               </p>
             </div>
-            <div class="grid-end">
+            <div class="grid-end" :class="{ error: store.isError(option.id) }">
               <ul class="list-reset option-item-list">
                 <li
                   v-for="item in store.getOptionItems(option.id)"
@@ -124,6 +168,7 @@ function scrollToTop() {
               </ul>
               <ul
                 class="list-reset option-item-list padding-top"
+                :class="{ error: store.isError(46) }"
                 v-if="option.id == 45 && selected.selected.options[option.id]"
               >
                 <li v-for="item in store.amfStitches" :key="item.id">
@@ -149,10 +194,27 @@ function scrollToTop() {
               </ul>
               <div
                 class="input-container"
+                :class="{ 'error-item': store.isError(44) }"
                 v-if="option.id == 31 && selected.selected.options[option.id]"
               >
                 <h6>文字を入力してください</h6>
-                <input type="text" v-model="name" />
+                <input id="textInput" type="text" v-model="name" />
+              </div>
+              <div
+                class="select-container"
+                v-if="
+                  option.id == 25 && selected.selected.options[option.id] == 2
+                "
+              >
+                <select v-model="mackinWidth">
+                  <option
+                    v-for="item in store.getOptionItems(63)"
+                    :key="item.id"
+                    :value="item.code"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
               </div>
             </div>
           </li>
@@ -205,9 +267,15 @@ function scrollToTop() {
   padding: 20px 0;
   display: grid;
   gap: 20px;
+  align-items: flex-start;
 }
 .option-grid:not(:last-child) {
   border-bottom: 1px solid var(--dark-gray);
+}
+
+.grid-end.error,
+.grid-end .error {
+  background-color: #faa;
 }
 
 .grid-start h4 {
@@ -273,6 +341,10 @@ function scrollToTop() {
   padding-block: 10px;
 }
 
+.input-container.error-item input {
+  background-color: #fcc;
+}
+
 .input-container h6 {
   font-size: 1rem;
 }
@@ -283,6 +355,20 @@ function scrollToTop() {
   height: 40px;
   padding: 0 10px;
   outline-color: var(--primary);
+  font-size: 16px;
+}
+
+.select-container {
+  padding-block-start: 15px;
+}
+
+.select-container select {
+  width: 100%;
+  max-width: 500px;
+  height: 40px;
+  padding: 0 10px;
+  outline-color: var(--primary);
+  font-size: 16px;
 }
 
 @media (min-width: 1200px) {

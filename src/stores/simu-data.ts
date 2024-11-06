@@ -873,7 +873,7 @@ export const optionList = [
         "image": "08160919_5d55f675e8930.jpg",
         "apiField": "style_name",
         "optionType": "hyoujun",
-        "sort": 33
+        "sort": 34
     },
     {
         "id": 34,
@@ -986,7 +986,7 @@ export const optionList = [
         "image": "08160920_5d55f6e86d057.jpg",
         "apiField": "enter_name",
         "optionType": "hyoujun",
-        "sort": 34
+        "sort": 33
     },
     {
         "id": 45,

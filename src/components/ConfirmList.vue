@@ -67,7 +67,7 @@ function scrollToTop() {
 
       <div class="group">
         <div class="card">
-          <div class="list-group">
+          <div class="list-group options-group">
             <div class="card-list" v-if="store.button">
               <div class="cell label">ボタン</div>
               <div class="cell value">
@@ -84,14 +84,14 @@ function scrollToTop() {
         </div>
 
         <div class="card">
-          <div class="list-group">
-            <template v-for="(value, key) in store.options" :key="key">
+          <div class="list-group options-group">
+            <template v-for="item in store.options" :key="item.option.id">
               <div class="card-list">
                 <div class="cell label">
-                  {{ store.getOption(key) }}
+                  {{ item.option.name }}
                 </div>
                 <div class="cell value">
-                  {{ store.getOptionItem(key, value) }}
+                  {{ item.data }}
                 </div>
               </div>
             </template>
@@ -217,6 +217,12 @@ footer {
 
   background-color: var(--custom-blue);
   color: var(--white);
+}
+
+@media (max-width: 640px) {
+  .options-group .card-list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 1200px) {

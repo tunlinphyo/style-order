@@ -1,7 +1,6 @@
-import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { Course } from './courses';
-import { DESIGNS, STYLES } from './data';
+import { STYLES } from './data';
 
 export interface Design {
   id: number;

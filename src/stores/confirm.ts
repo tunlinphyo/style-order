@@ -6,7 +6,7 @@ import { useCourseStore } from './courses'
 import { useDesignStore } from './designs'
 import { useButtonsStore } from './buttons'
 import { useLiningsStore } from './linings'
-import { useOptionsStore } from './options'
+import { useOptionsStore, type Option } from './options'
 
 export const useConfirmStore = defineStore('confirm', () => {
     const selectedStore = useSelectedStore()
@@ -23,7 +23,16 @@ export const useConfirmStore = defineStore('confirm', () => {
     const designs = computed(() => selectedStore.selected.designs)
     const button = computed(() => buttonStore.buttons.find(item => item.code == selectedStore.selected.button))
     const lining = computed(() => liningStore.getLining(selectedStore.selected.lining))
-    const options = computed(() => selectedStore.selected.options)
+    const options = computed(() => {
+        const list: { option: Option, data: string | number }[] = []
+        Object.entries(selectedStore.selected.options).forEach(([key, value]) => {
+            const option = getOption(Number(key))
+            const data = getOptionItem(Number(key), value)
+            if (option) list.push({ option, data })
+        })
+
+        return list.sort((a, b) => b.option.sort - a.option.sort)
+    })
 
     function getItem(id: number) {
         return designStore.getItem(id)?.name
@@ -35,17 +44,17 @@ export const useConfirmStore = defineStore('confirm', () => {
 
     function getOption(id: number) {
         const option = optionStore.getOption(Number(id))
-        if (!option) return '--'
-        return option.name
+        if (!option) return null
+        return option
     }
 
     function getOptionItem(id: number, code: string | number) {
         const key = Number(id)
-        if (typeof code == 'string') return code
-        const item = optionStore.getOptionItem(code)
-        if (!item) return '-----'
-        return [46].includes(key) ? item.code : item.name
+        if ([44].includes(key)) return code
+        const item = optionStore.getOptionItem(Number(code), key)
+        if (!item) return '-'
+        return item.name
     }
 
-    return { gender, fabric, course, designs, button, lining, options, getItem, getDesign, getOption, getOptionItem }
+    return { gender, fabric, course, designs, button, lining, options, getItem, getDesign }
 })

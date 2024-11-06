@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useSelectedStore, type SelectedName } from './selected';
 import { isObjectEmpty } from './utils';
 import { useCourseStore } from './courses';
+import { useOptionsStore } from './options';
 
 export interface Step {
     step: number;
@@ -14,6 +15,7 @@ export interface Step {
 export const useStepStore = defineStore('step', () => {
     const selectedStore = useSelectedStore()
     const courseStore = useCourseStore()
+    const optionStore = useOptionsStore()
 
     const steps: Step[] = [
         {
@@ -124,7 +126,15 @@ export const useStepStore = defineStore('step', () => {
                 return alert('Select designs!')
             }
         } else if (step.value.dataName == 'options') {
-            if (isObjectEmpty(selectedStore.selected.options)) return alert('Select options!')
+
+            console.log(JSON.parse(JSON.stringify(selectedStore.selected.options)))
+
+            const [isError, errors] = optionStore.checkSelected()
+
+            console.log(errors)
+            if (isError) {
+                return alert('Select options!')
+            }
         } else {
             if (!selectedStore.selected[step.value.dataName as SelectedName]) return alert(`Select a ${step.value.dataName}`)
         }

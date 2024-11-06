@@ -138,7 +138,7 @@ export const useSelectedStore = defineStore('selected', () => {
     if (!isObjectEmpty(designs)) {
       selected.value.designs = designs
     }
-    const options = parseOptionsQuery(query)
+    const options = parseOptionsQuery(query, [44])
     if (!isObjectEmpty(options)) {
       selected.value.options = options
     }

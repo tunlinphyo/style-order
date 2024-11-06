@@ -23,7 +23,7 @@ export function parseDesignsQuery(query: LocationQuery): OptionsObject {
     return options;
 }
 
-export function parseOptionsQuery(query: LocationQuery): OptionsObject {
+export function parseOptionsQuery(query: LocationQuery, keys: number[] = []): OptionsObject {
     const options: OptionsObject = {};
 
     Object.keys(query).forEach((key: string) => {
@@ -31,9 +31,13 @@ export function parseOptionsQuery(query: LocationQuery): OptionsObject {
 
         if (match) {
             const index = parseInt(match[1], 10);
-            options[index] = isNaN(Number(query[key])) ? String(query[key]) : Number(query[key]);
+            options[index] = keys.includes(index) ? String(query[key]) : Number(query[key]);
         }
     });
 
     return options;
+}
+
+export function removeValueFromArray<T>(arr: T[], value: T): T[] {
+    return arr.filter(item => item !== value);
 }

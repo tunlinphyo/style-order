@@ -2,6 +2,11 @@ import { defineStore } from 'pinia'
 // import { AMF_STITCH } from './data'
 import { amfStitchList, optionItemList, optionList } from './simu-data'
 import { FLOWER_HALL } from './data';
+import { useDesignStore, type Item } from './designs';
+import { useCourseStore } from './courses';
+import { useSelectedStore } from './selected';
+import { ref, watch } from 'vue';
+import { removeValueFromArray } from './utils';
 
 export interface OptionItem {
   id: number;
@@ -27,13 +32,50 @@ export interface Option {
   detail?: string;
 }
 
+interface ItemOption {
+  item: Item;
+  options: Option[];
+}
+
 export const useOptionsStore = defineStore('options', () => {
 
   // function intersection(arr1: number[], arr2: number[]): number[] {
   //   return arr1.filter(value => arr2.includes(value));
   // }
+  const designStore = useDesignStore()
+  const courseStore = useCourseStore()
+  const selectedStore = useSelectedStore()
+
+  const currentOptions = ref<number[]>([])
+  const errors = ref<number[]>([])
 
   const amfStitches: OptionItem[] = amfStitchList
+
+  watch(selectedStore.selected, (nextVal) => {
+    console.log('NEXT', nextVal)
+    errors.value.forEach(id => {
+      if (id in nextVal.options) {
+        errors.value = removeValueFromArray<number>(errors.value, id)
+      }
+    })
+  })
+
+  function getOptionList() {
+    currentOptions.value = []
+    const list: ItemOption[] = []
+    const items = designStore.getItems(
+      courseStore.getCourse(selectedStore.selected.course)
+    )
+    items.forEach(item => {
+      const options = getOptions(item.type)
+      options.forEach(o => {
+        currentOptions.value.push(o.id)
+      })
+      list.push({ item, options })
+    })
+
+    return list
+  }
 
   function getOptions(type: number) {
 
@@ -129,9 +171,35 @@ export const useOptionsStore = defineStore('options', () => {
     return optionList.find(item => item.id == id)
   }
 
-  function getOptionItem(code: number | string) {
-    return optionItemList.find(item => item.code == code)
+  function getOptionItem(code: number, option: number) {
+    return optionItemList.find(item => (item.code == code && item.option == option))
   }
 
-  return { getOptions, getOptionItems, getImageUrl, amfStitches, getCustomOptions, getOption, getOptionItem }
+  function checkSelected() {
+    let isError = false
+    const err: number[] = []
+
+    currentOptions.value.forEach(key => {
+      if (!(key in selectedStore.selected.options)) {
+        isError = true
+        err.push(key)
+      } else if (key == 31 && !selectedStore.selected.options[44]) {
+        isError = true
+        err.push(44)
+      } else if (key == 45 && !(46 in selectedStore.selected.options)) {
+        isError = true
+        err.push(46)
+      }
+    })
+
+    errors.value = err
+
+    return [isError, err]
+  }
+
+  function isError(id: number) {
+    return errors.value.includes(id)
+  }
+
+  return { errors, isError, getOptionList, getOptionItems, getImageUrl, amfStitches, getCustomOptions, getOption, getOptionItem, checkSelected }
 })
