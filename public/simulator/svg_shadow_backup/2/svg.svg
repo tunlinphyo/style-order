@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layar1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 4160 6240" style="enable-background:new 0 0 4160 6240;" xml:space="preserve">
+<pattern id="normal" patternUnits="userSpaceOnUse" width="270" height="270" patternTransform="">
+		<image image-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" xlink:href="/images/simulator/default/default_tex.jpg" x="0" y="0" width="270" height="270" style="-ms-interpolation-mode: bicubic;" />
+  </pattern>
+  <pattern id="left" patternTransform="rotate(23)" patternUnits="userSpaceOnUse" width="270" height="270">
+		<image image-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" xlink:href="/images/simulator/default/default_tex.jpg" x="0" y="0" width="270" height="270" style="-ms-interpolation-mode: bicubic;" />
+  </pattern>
+  <pattern id="right" patternTransform="rotate(-23)" patternUnits="userSpaceOnUse" width="270" height="270">
+		<image image-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" xlink:href="/images/simulator/default/default_tex.jpg" x="0" y="0" width="270" height="270" style="-ms-interpolation-mode: bicubic;" />
+  </pattern>
+<style type="text/css">
+	.normal{fill:url(#normal);}
+	.left{fill:url(#left);}
+	.right{fill:url(#right);}
+
+</style>
+<path id="body-right" class="normal" d="M1984,4035c0-8-18-232-18-232l-14-530c0,0,26-334,44-362s32-64,32-64l-13-32c0,0-7-17-7-23
+	s-33-92-33-92l-102-318l-59-208l-88-350c0,0-68-341-67-352s-21-98-22-106s-16-27-3-100l11-51c0,0-18,37-22,42s-10,11-13,12
+	s-40,23-45,26s-28,17-28,17s-84,45-89,47s-65,29-76,33s-74,35-103,42c0,0-30,13-41,17s-81,30-101,35s-42,6-45,9s-10,7-8,10s7,5,7,5
+	s18,53,24,75s37,160,38,231c0,0,23,242,17,319s-10,223-15,247s-10,205-25,240s-12,48-20,69s-16,43-16,43l-15-7c0,0,7,20,7,27
+	s9,81,14,103s16,131,16,150s-1,41,1,56s14,132,15,171s11,215,10,236s4,86,3,123s-3,154-4,166s-27,210-34,239s-17,73-17,73
+	s-33,121-36,127s-21,29-22,37s-1,12,2,14s13,10,13,10s19,28,88,67c0,0,141,81,162,90s83,43,101,49s502,193,511,198s47,12,47,12
+	s9-2,8-5s36-200,36-200l39-159l9-37C2038,4274,1984,4043,1984,4035z M1890.3,4436.3c-23.9,0-43.3-19.4-43.3-43.3
+	s19.4-43.3,43.3-43.3s43.3,19.4,43.3,43.3C1933.7,4416.9,1914.3,4436.3,1890.3,4436.3z"/>
+<path id="body-left" class="normal" d="M2940,4099c-2-11-12-51-16-67s-10-26-10-39s-3-40-7-60s-22-253-23-283s13-472,13-479
+	s38-467,41-479s4-30-1-41s-36-109-36-109s-43-226-42-352c0,0-17-305,7-457l18-211c0-14,5-24,1-28s-10-6-10-6s-5,2-15-1s-44-13-48-14
+	s-157-53-218-82s-163-85-173-90s-23-17-23-17s-4-11-12-16s-34-25-34-25s11,31,14,49s4,41.5-1.5,69.5c0,0-8.5,37-9,45s-4,19.5-4,19.5
+	s-11,34.5-11.5,47.5s-13,82-12.5,90.5s-9,73.5-10,80s-12,91.5-12,93.5s-18.5,121-23.5,140.5s-28,139.5-28.5,147.5
+	s-20.5,97.5-21.5,104s-6,35-8,39.5s-76.5,268-80.5,282s-31.5,110-44.5,138.5s-78,217.5-79,221.5s-49,134-49,134l-37,102
+	c0,0,2,33,2,38s-8,166-8,174s6,345,5,354s15,303,13,318s11,116,12,124s10,46,11,51s66,265,69,282s78,273,80,276s13,12,13,12l41-23
+	c0,0,108-51,114-54s96-31,96-31l173-64c0,0,146-62,160-68s157-79,187-98s77-66,78-70s7-11,7-11S2942,4110,2940,4099z M1988,3160
+	c0,0,0.7-7.7,1.3-9c0.7-1.3,1.3-2.3,1.3-2.3l1.3-2h0.1c2.7-20.6,18.6-36,42.3-36.5c16.2-0.3,30.4,8.9,37.6,22.4l-0.2,0
+	c0,0,11.3,16.7-0.7,42.3l0.1,0c-7.6,12.9-21.4,21.7-37.1,21.7c-19.7,0-36-11.8-40.8-31.3h-1.8L1988,3160z M2034.4,3416.7
+	c16,0,30,9,37.3,22.3l0,0c0,0,8.3,18.7,1.3,38.7c0,0,0.1,0,0.2,0c-6.6,15.1-21.5,25.5-38.8,25.5c-23.5,0-42.6-19.4-42.6-43.3
+	S2010.8,3416.7,2034.4,3416.7z M1994.3,3750.4c0-23.7,19.4-42.9,43.4-42.9c15.8,0,29.6,8.4,37.2,20.8l-0.2,0c0,0,13.1,19.3,0.7,43.5
+	c-7.5,12.9-21.5,21.7-37.7,21.7C2013.7,3793.4,1994.3,3774.2,1994.3,3750.4z M2052,4108.1c-23.8,0-43.1-19-43.1-42.5
+	s19.3-42.5,43.1-42.5c16.2,0,30.4,8.9,37.7,22c0.8,1.6,9,19.5,0.8,39.4C2083.5,4098.5,2068.9,4108.1,2052,4108.1z"/>
+</svg>
