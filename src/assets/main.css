@@ -58,6 +58,7 @@ button {
   inset: 0;
   border: 5px solid var(--primary);
   pointer-events: none;
+  border-radius: var(--border-radius);
 }
 
 .selected-item::after {

@@ -52,7 +52,6 @@ export const useOptionsStore = defineStore('options', () => {
   const amfStitches: OptionItem[] = amfStitchList
 
   watch(selectedStore.selected, (nextVal) => {
-    console.log('NEXT', nextVal)
     errors.value.forEach(id => {
       if (id in nextVal.options) {
         errors.value = removeValueFromArray<number>(errors.value, id)
@@ -87,7 +86,7 @@ export const useOptionsStore = defineStore('options', () => {
 
     const removeSome = (option: Option) => {
       // 63 for 25 - code:2
-      return !([48, 49, 61, 62, 67, 36, 46, 55, 56, 63, 44].includes(option.id))
+      return !([48, 49, 61, 62, 67, 36, 46, 55, 56, 63, 44, 69].includes(option.id))
     }
 
     return optionList.filter(option => {
@@ -160,7 +159,6 @@ export const useOptionsStore = defineStore('options', () => {
         image: item.option_image,
       })
     })
-    console.log('OPTION_ITEMS', optionItems)
   }
 
   function getImageUrl(img: string) {
@@ -183,10 +181,10 @@ export const useOptionsStore = defineStore('options', () => {
       if (!(key in selectedStore.selected.options)) {
         isError = true
         err.push(key)
-      } else if (key == 31 && !selectedStore.selected.options[44]) {
+      } else if (selectedStore.selected.options[31] && !selectedStore.selected.options[44]) {
         isError = true
         err.push(44)
-      } else if (key == 45 && !(46 in selectedStore.selected.options)) {
+      } else if (selectedStore.selected.options[45] && !(46 in selectedStore.selected.options)) {
         isError = true
         err.push(46)
       }
@@ -194,7 +192,7 @@ export const useOptionsStore = defineStore('options', () => {
 
     errors.value = err
 
-    return [isError, err]
+    return isError
   }
 
   function isError(id: number) {

@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { useOptionsStore } from '@/stores/options'
 import { useSelectedStore } from '@/stores/selected'
-import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
+import {
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 const store = useOptionsStore()
 const selected = useSelectedStore()
 const listRef = useTemplateRef<HTMLLIElement>('options')
 
+const mounted = ref(false)
 const name = ref('')
 const mackinWidth = ref<number | null>(null)
 
@@ -25,19 +33,22 @@ onMounted(() => {
       delete selected.selected.options[Number(key)]
     }
   })
+
+  mounted.value = true
+})
+
+onBeforeUnmount(() => {
+  mounted.value = false
 })
 
 watch(
   () => store.errors,
   async () => {
-    console.log('ERROR_CAHNGE')
     await nextTick()
-    if (listRef.value) {
+    if (listRef.value && mounted.value) {
       const textInput = listRef.value.querySelector('#textInput')
-      console.log(document.activeElement, textInput)
       if (document.activeElement == textInput) return
       const error = listRef.value.querySelector('.error-item')
-      console.log('ERROR_ELEM', listRef.value, error)
       if (error) {
         error.scrollIntoView({
           behavior: 'smooth',
@@ -125,6 +136,7 @@ function scrollToTop() {
                   store.isError(option.id) ||
                   (option.id == 45 && store.isError(46)),
               }"
+              :data-id="option.id"
             >
               <h4>{{ option.name }}</h4>
               <figure v-if="option.image" class="figure-reset option-image">
@@ -153,6 +165,7 @@ function scrollToTop() {
                         selected.selected.options[option.id] == item.code,
                     }"
                     @click="selected.setOption(option.id, item.code)"
+                    :data-code="item.code"
                   >
                     <figure v-if="item.image" class="figure-reset">
                       <img
@@ -179,6 +192,7 @@ function scrollToTop() {
                         selected.selected.options[46] == item.code,
                     }"
                     @click="selected.setOption(46, item.code)"
+                    :data-code="item.code"
                   >
                     <figure v-if="item.image" class="figure-reset">
                       <img
@@ -260,7 +274,7 @@ function scrollToTop() {
 }
 
 .option-list {
-  padding-inline: 20px;
+  padding-inline: 10px;
 }
 
 .option-grid {
@@ -276,6 +290,11 @@ function scrollToTop() {
 .grid-end.error,
 .grid-end .error {
   background-color: #faa;
+  border-radius: calc(var(--border-radius) * 2);
+}
+
+.grid-start {
+  padding-inline: 10px;
 }
 
 .grid-start h4 {
@@ -285,7 +304,7 @@ function scrollToTop() {
 }
 
 .grid-end {
-  padding-block-end: 5px;
+  margin-block-end: 5px;
 }
 
 .option-item {
@@ -295,6 +314,8 @@ function scrollToTop() {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 .option-image {
@@ -302,6 +323,7 @@ function scrollToTop() {
 }
 .option-image img {
   width: 100%;
+  border-radius: calc(var(--border-radius) * 0.5);
 }
 .option-item img {
   width: 100%;
@@ -318,6 +340,8 @@ function scrollToTop() {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
+  padding: 10px;
+  border-radius: var(--border-radius);
 }
 .option-item-list.padding-top {
   padding-top: 10px;
@@ -338,7 +362,7 @@ function scrollToTop() {
 
 .input-container {
   display: block;
-  padding-block: 10px;
+  padding: 10px;
 }
 
 .input-container.error-item input {
@@ -360,6 +384,7 @@ function scrollToTop() {
 
 .select-container {
   padding-block-start: 15px;
+  padding-inline: 10px;
 }
 
 .select-container select {
@@ -386,13 +411,13 @@ function scrollToTop() {
   }
 
   .option-list {
-    padding-inline: 40px;
+    padding-inline: 30px;
   }
 
   .option-grid {
     display: grid;
-    grid-template-columns: minmax(200px, 0.25fr) 1fr;
-    gap: 40px;
+    grid-template-columns: minmax(200px, 0.3fr) 1fr;
+    gap: 20px;
   }
 
   .grid-start h4 {

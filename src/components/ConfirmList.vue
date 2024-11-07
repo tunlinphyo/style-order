@@ -114,6 +114,7 @@ function scrollToTop() {
 <style scoped>
 .confirm {
   width: 100%;
+  padding-block-end: 20px;
 }
 
 .item {
@@ -219,6 +220,19 @@ footer {
   color: var(--white);
 }
 
+.card-list:first-child .label {
+  border-top-left-radius: var(--border-radius);
+}
+.card-list:first-child .value {
+  border-top-right-radius: var(--border-radius);
+}
+.card-list:last-child .label {
+  border-bottom-left-radius: var(--border-radius);
+}
+.card-list:last-child .value {
+  border-bottom-right-radius: var(--border-radius);
+}
+
 @media (max-width: 640px) {
   .options-group .card-list {
     grid-template-columns: 1fr 1fr;
@@ -236,7 +250,7 @@ footer {
 
   .sticky-title {
     top: 0px;
-    padding-inline: 40px;
+    padding-inline: 20px;
   }
 
   footer {

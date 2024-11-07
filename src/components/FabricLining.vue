@@ -31,6 +31,8 @@ const store = useObjectStore()
   width: 65%;
   aspect-ratio: 2 / 3;
   position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
@@ -66,6 +68,8 @@ const store = useObjectStore()
   width: 100px;
   padding: 5px;
   text-align: center;
+
+  border-bottom-right-radius: var(--border-radius);
 }
 
 .fabric img,

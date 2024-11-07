@@ -39,6 +39,8 @@
 
   --custom-blue-dark: rgb(117, 133, 134);
   --custom-blue: rgb(160, 177, 178);
+
+  --border-radius: 2px;
 }
 
 /* semantic color variables for this project */

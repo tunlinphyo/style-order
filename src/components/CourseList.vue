@@ -77,6 +77,7 @@ onMounted(() => {
 
   position: relative;
   overflow: hidden;
+  border-radius: var(--border-radius);
 
   /* outline: 2px solid var(--dark-gray); */
 }

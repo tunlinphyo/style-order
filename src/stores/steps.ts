@@ -1,9 +1,8 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useSelectedStore, type SelectedName } from './selected';
-import { isObjectEmpty } from './utils';
-import { useCourseStore } from './courses';
-import { useOptionsStore } from './options';
+import { useSelectedStore, type SelectedName } from './selected'
+import { useCourseStore } from './courses'
+import { useOptionsStore } from './options'
 
 export interface Step {
     step: number;
@@ -127,11 +126,8 @@ export const useStepStore = defineStore('step', () => {
             }
         } else if (step.value.dataName == 'options') {
 
-            console.log(JSON.parse(JSON.stringify(selectedStore.selected.options)))
+            const isError = optionStore.checkSelected()
 
-            const [isError, errors] = optionStore.checkSelected()
-
-            console.log(errors)
             if (isError) {
                 return alert('Select options!')
             }

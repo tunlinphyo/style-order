@@ -146,6 +146,7 @@ h1 {
   .gender-list {
     --border: 5px;
     --offset: -7px;
+    gap: 4vw;
   }
   .gender {
     aspect-ratio: 1 / 1;

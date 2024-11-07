@@ -779,8 +779,6 @@ export const useDesignStore = defineStore('design', () => {
         sort: Number(item.rank)
       })
     })
-
-    console.log(designs)
   }
 
   function getItem(id: number) {

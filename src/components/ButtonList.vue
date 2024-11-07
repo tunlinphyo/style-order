@@ -52,6 +52,8 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   background-color: var(--white);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 figure {

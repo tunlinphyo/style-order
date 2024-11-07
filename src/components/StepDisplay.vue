@@ -133,8 +133,8 @@ async function scrollToActive() {
 @media (min-width: 992px) {
   .steps-container {
     --num-size: 32px;
-    --font-size: 1.1rem;
-    --icon-size: 28px;
+    --font-size: 1.05rem;
+    --icon-size: 26px;
   }
 }
 </style>

@@ -79,7 +79,6 @@ function onObjectLoaded() {
 }
 
 function onLoaded(event: Event) {
-  console.log('ONLOADED')
   const elem = event.target as HTMLImageElement
   elem.style.opacity = '1'
   elem.dataset.error = '0'
