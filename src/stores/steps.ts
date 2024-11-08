@@ -3,6 +3,11 @@ import { defineStore } from 'pinia'
 import { useSelectedStore, type SelectedName } from './selected'
 import { useCourseStore } from './courses'
 import { useOptionsStore } from './options'
+import { useFabricsStore } from './fabrics'
+import { showToast, showToasts } from '@/plugins/toast/ToastPlugin'
+import { useDesignStore } from './designs'
+import { useButtonsStore } from './buttons'
+import { useLiningsStore } from './linings'
 
 export interface Step {
     step: number;
@@ -13,7 +18,11 @@ export interface Step {
 
 export const useStepStore = defineStore('step', () => {
     const selectedStore = useSelectedStore()
+    const fabricStore = useFabricsStore()
     const courseStore = useCourseStore()
+    const designStore = useDesignStore()
+    const buttonStore = useButtonsStore()
+    const liningStore = useLiningsStore()
     const optionStore = useOptionsStore()
 
     const steps: Step[] = [
@@ -119,20 +128,24 @@ export const useStepStore = defineStore('step', () => {
     }
 
     function nextStep() {
-        if (step.value.dataName == 'designs') {
-            const is = courseStore.isAllDesignSelected(selectedStore.selected.course, selectedStore.selected.designs)
-            if (!is) {
-                return alert('Select designs!')
-            }
+        if (step.value.dataName == 'fabric') {
+            const error = fabricStore.checkError()
+            if (error) return showToast(error)
+        } else if (step.value.dataName == 'course') {
+            const error = courseStore.checkError()
+            if (error) return showToast(error)
+        } else if (step.value.dataName == 'designs') {
+            const errors = designStore.checkError()
+            if (errors.length) return showToasts(errors)
+        } else if (step.value.dataName == 'button') {
+            const error = buttonStore.checkError()
+            if (error) return showToast(error)
+        } else if (step.value.dataName == 'lining') {
+            const error = liningStore.checkError()
+            if (error) return showToast(error)
         } else if (step.value.dataName == 'options') {
-
             const isError = optionStore.checkSelected()
-
-            if (isError) {
-                return alert('Select options!')
-            }
-        } else {
-            if (!selectedStore.selected[step.value.dataName as SelectedName]) return alert(`Select a ${step.value.dataName}`)
+            if (isError) return showToast('[オプション]を選択してください!')
         }
 
         if (stepIndex.value == 3 && isSkirtOnly()) {

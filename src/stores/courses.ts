@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { ObjectData } from './selected';
+import { useSelectedStore, type ObjectData, type SelectedName } from './selected';
 
 export interface Course {
     id: number;
@@ -11,6 +11,8 @@ export interface Course {
 }
 
 export const useCourseStore = defineStore('courses', () => {
+    const selectedStore = useSelectedStore()
+
     const courses: Course[] = [
         {
             id: 1,
@@ -133,8 +135,11 @@ export const useCourseStore = defineStore('courses', () => {
         }
     ]
 
-    function getCourses(gender: number) {
-        return courses.filter(item => item.gender == gender)
+    const error = ref(false)
+    const selected = computed(() => selectedStore.selected.course)
+
+    function getCourses() {
+        return courses.filter(item => item.gender == selectedStore.selected.gender)
     }
 
     function getCourse(id: number) {
@@ -151,5 +156,17 @@ export const useCourseStore = defineStore('courses', () => {
         return is
     }
 
-    return { getCourse, getCourses, isAllDesignSelected }
+
+    function checkError() {
+        error.value = !selectedStore.selected.course
+
+        if (error.value) return '[コース]を選択してください!'
+        return ''
+    }
+
+    function setSelected(name: SelectedName, value: number) {
+        selectedStore.setSelected(name, value)
+    }
+
+    return { error, selected, checkError, getCourse, getCourses, isAllDesignSelected, setSelected }
 })

@@ -1,36 +1,19 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
-import { useSelectedStore } from '@/stores/selected'
-import { useCourseStore } from '@/stores/courses'
+import { nextTick, onMounted, useTemplateRef, watch } from 'vue'
 import { useDesignStore } from '@/stores/designs'
 
-const { getItems, getDesigns, getTypeName, designLog } = useDesignStore()
-const { selected, currentType, setDesign, setCurrentType } = useSelectedStore()
-const { getCourse } = useCourseStore()
+const store = useDesignStore()
 const listRef = useTemplateRef<HTMLLIElement>('designs')
 
-function setDesignData(key: number, value: number) {
-  setDesign(key, value)
-  setCurrentType(key)
-}
-
 onMounted(() => {
-  designLog()
+  store.designLog()
   if (listRef.value) {
-    const typeEl = listRef.value.querySelector(`.type-${currentType}`)
+    const typeEl = listRef.value.querySelector(`.type-${store.currentType}`)
     if (!typeEl) {
       return scrollToTop()
     }
     const item = typeEl.querySelector('.selected-item')
     if (item) {
-      // const offset = window.innerHeight - 250
-      // const elementPosition = item.getBoundingClientRect().top + window.scrollY
-      // const offsetPosition = elementPosition - offset
-
-      // window.scrollTo({
-      //   top: offsetPosition,
-      //   behavior: 'smooth',
-      // })
       item.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
@@ -42,6 +25,24 @@ onMounted(() => {
   }
 })
 
+watch(
+  () => store.errors,
+  async nextVal => {
+    if (nextVal.length && listRef.value) {
+      const typeEl = listRef.value.querySelector(`.type-${nextVal[0]}`)
+      const item = typeEl?.querySelector('.design')
+      if (item) {
+        await nextTick()
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+    }
+  }
+)
+
 function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -51,7 +52,7 @@ function scrollToTop() {
 }
 
 function onSelect(item: number, design: number) {
-  setDesignData(item, design)
+  store.setDesignData(item, design)
   scrollToTop()
 }
 </script>
@@ -60,25 +61,25 @@ function onSelect(item: number, design: number) {
   <section class="designs">
     <ul ref="designs" class="scroll-container list-reset">
       <li
-        v-for="item in getItems(getCourse(selected.course))"
+        v-for="item in store.getItems()"
         :key="item.id"
         :class="`type-${item.id}`"
       >
         <h3 class="sticky-title">{{ item.name }}</h3>
         <div class="group" v-for="type in item.styles" :key="type">
           <h4 class="group-title" v-if="item.styles.length > 1">
-            {{ getTypeName(type) }}
+            {{ store.getTypeName(type) }}
           </h4>
           <ul class="list-reset design-list">
             <li
-              v-for="design in getDesigns(item, type)"
+              v-for="design in store.getDesigns(item, type)"
               :key="design.id"
               :data-id="design.id"
             >
               <button
                 class="design button-reset"
                 :class="{
-                  'selected-item': selected.designs[item.id] == design.id,
+                  'selected-item': store.selected[item.id] == design.id,
                 }"
                 @click="onSelect(item.id, design.id)"
               >

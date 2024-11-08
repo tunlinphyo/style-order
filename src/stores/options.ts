@@ -3,9 +3,8 @@ import { defineStore } from 'pinia'
 import { amfStitchList, optionItemList, optionList } from './simu-data'
 import { FLOWER_HALL } from './data';
 import { useDesignStore, type Item } from './designs';
-import { useCourseStore } from './courses';
 import { useSelectedStore } from './selected';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { removeValueFromArray } from './utils';
 
 export interface OptionItem {
@@ -38,16 +37,12 @@ interface ItemOption {
 }
 
 export const useOptionsStore = defineStore('options', () => {
-
-  // function intersection(arr1: number[], arr2: number[]): number[] {
-  //   return arr1.filter(value => arr2.includes(value));
-  // }
   const designStore = useDesignStore()
-  const courseStore = useCourseStore()
   const selectedStore = useSelectedStore()
 
   const currentOptions = ref<number[]>([])
   const errors = ref<number[]>([])
+  const selected = computed(() => selectedStore.selected.options)
 
   const amfStitches: OptionItem[] = amfStitchList
 
@@ -62,9 +57,7 @@ export const useOptionsStore = defineStore('options', () => {
   function getOptionList() {
     currentOptions.value = []
     const list: ItemOption[] = []
-    const items = designStore.getItems(
-      courseStore.getCourse(selectedStore.selected.course)
-    )
+    const items = designStore.getItems()
     items.forEach(item => {
       const options = getOptions(item.type)
       options.forEach(o => {
@@ -107,45 +100,6 @@ export const useOptionsStore = defineStore('options', () => {
   function getOptionItems(id: number) {
     return optionItemList.filter(item => item.option == id)
   }
-
-  // function getOptions() {
-  //   const options: Option[] = []
-  //   const optionItems: OptionItem[] = []
-
-  //   const getItems = (list: string | string[]) => {
-  //     if (Array.isArray(list)) return list.map(n => Number(n))
-  //     return list.split(',').map(n => Number(n))
-  //   }
-
-  //   Object.values(OPTIONS).forEach(option => {
-  //     options.push({
-  //       id: Number(option.option_id),
-  //       name: option.option_name,
-  //       number: option.option_num,
-  //       type: Number(option.option_type),
-  //       items: getItems(option.option_item),
-  //       isKatagami: Boolean(option.katagami_flg),
-  //       inputType: Number(option.input_type),
-  //       image: option.images,
-  //       apiField: option.api_field,
-  //       optionType: option.option_shiwake,
-  //       sort: option.rank
-  //     })
-  //     Object.values(option.optionitems).forEach(item => {
-  //       optionItems.push({
-  //         id: Number(item.item_id),
-  //         option: Number(item.option_id),
-  //         code: Number(item.option_code),
-  //         name: item.option_field,
-  //         isDefault: Boolean(item.option_default),
-  //         image: item.option_image,
-  //       })
-  //     })
-  //   })
-
-  //   console.log('OPTIONS', options)
-  //   console.log('OPTION_ITEMS', optionItems)
-  // }
 
   function getCustomOptions() {
     const optionItems: OptionItem[] = []
@@ -199,5 +153,15 @@ export const useOptionsStore = defineStore('options', () => {
     return errors.value.includes(id)
   }
 
-  return { errors, isError, getOptionList, getOptionItems, getImageUrl, amfStitches, getCustomOptions, getOption, getOptionItem, checkSelected }
+  function deleteOption(key: string | number) {
+    delete selectedStore.selected.options[Number(key)]
+  }
+
+  return {
+    errors, selected, amfStitches,
+    isError, getOptionList, getOptionItems, getImageUrl,
+    getCustomOptions, getOption, getOptionItem,
+    checkSelected, deleteOption,
+    setOption: selectedStore.setOption
+  }
 })

@@ -1,23 +1,49 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
+import { nextTick, onMounted, useTemplateRef, watch } from 'vue'
 import { useLiningsStore } from '@/stores/linings'
-import { useSelectedStore } from '@/stores/selected'
 
 const listRef = useTemplateRef<HTMLLIElement>('linings')
 const store = useLiningsStore()
-const { selected, setSelected } = useSelectedStore()
 
 onMounted(() => {
   if (listRef.value) {
     const item = listRef.value.querySelector('.selected-item')
-    if (item)
+    if (item) {
       item.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'center',
       })
+    } else {
+      scrollToTop()
+    }
   }
 })
+
+watch(
+  () => store.error,
+  async nextVal => {
+    if (nextVal && listRef.value) {
+      const item = listRef.value.querySelector('.lining')
+      if (item) {
+        await nextTick()
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+    }
+  }
+)
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
+}
 </script>
 
 
@@ -27,8 +53,8 @@ onMounted(() => {
       <li v-for="item in store.linings" :key="item.id">
         <button
           class="lining button-reset"
-          :class="{ 'selected-item': item.code == selected.lining }"
-          @click="setSelected('lining', item.code)"
+          :class="{ 'selected-item': item.code == store.selected }"
+          @click="store.setSelected('lining', item.code)"
         >
           <figure class="figure-reset">
             <img

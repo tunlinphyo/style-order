@@ -1,38 +1,64 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
+import { nextTick, onMounted, useTemplateRef, watch } from 'vue'
 import { useButtonsStore } from '@/stores/buttons'
-import { useSelectedStore } from '@/stores/selected'
 
 const listRef = useTemplateRef<HTMLLIElement>('buttons')
-const buttonStore = useButtonsStore()
-const { selected, setSelected } = useSelectedStore()
+const store = useButtonsStore()
 
 onMounted(() => {
   if (listRef.value) {
     const item = listRef.value.querySelector('.selected-item')
-    if (item)
+    if (item) {
       item.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'center',
       })
+    } else {
+      scrollToTop()
+    }
   }
 })
+
+watch(
+  () => store.error,
+  async nextVal => {
+    if (nextVal && listRef.value) {
+      const item = listRef.value.querySelector('.button')
+      if (item) {
+        await nextTick()
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+    }
+  }
+)
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
+}
 </script>
 
 <template>
   <section class="buttons">
     <ul ref="buttons" class="scroll-container list-reset button-list">
-      <li v-for="button in buttonStore.buttons" :key="button.id">
+      <li v-for="button in store.buttons" :key="button.id">
         <button
           class="button button-reset"
-          :class="{ 'selected-item': button.code == selected.button }"
-          @click="setSelected('button', button.code)"
+          :class="{ 'selected-item': button.code == store.selected }"
+          @click="store.setSelected('button', button.code)"
         >
           <figure class="figure-reset">
             <img
               v-if="button.image"
-              :src="buttonStore.getImageUrl(button.image)"
+              :src="store.getImageUrl(button.image)"
               alt="button image"
             />
             <div v-else class="image-holder"></div>

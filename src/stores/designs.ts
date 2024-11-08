@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import type { Course } from './courses';
+import { useCourseStore, type Course } from './courses';
 import { STYLES } from './data';
+import { computed, ref } from 'vue';
+import { useSelectedStore } from './selected';
 
 export interface Design {
   id: number;
@@ -132,7 +134,6 @@ export const useDesignStore = defineStore('design', () => {
       design: 9,
     },
   ]
-
   const designs: Design[] = [
     {
       "id": 1,
@@ -764,6 +765,13 @@ export const useDesignStore = defineStore('design', () => {
     }
   ]
 
+  const selectedStore = useSelectedStore()
+  const courseStore = useCourseStore()
+
+  const errors = ref<number[]>([])
+  const selected = computed(() => selectedStore.selected.designs)
+  const currentType = computed(() => selectedStore.currentType)
+
   function designLog() {
     const designs: Design[] = []
     Object.values(STYLES).forEach((item, index) => {
@@ -785,7 +793,8 @@ export const useDesignStore = defineStore('design', () => {
     return items.find(item => item.id == id)
   }
 
-  function getItems(course: Course | null): Item[] {
+  function getItems(): Item[] {
+    const course = courseStore.getCourse(selectedStore.selected.course)
     if (!course) return []
     return course.designs.map(id => (items.find(item => item.id === id)) as Item)
   }
@@ -817,5 +826,31 @@ export const useDesignStore = defineStore('design', () => {
     return types[type];
   }
 
-  return { getItem, getItems, getDefaultDesign, getDesign, getDesigns, getTypeName, designLog }
+  function checkError() {
+    const course = courseStore.getCourse(selectedStore.selected.course)
+    const designs = selectedStore.selected.designs
+    const ids: number[] = []
+
+    course?.designs.forEach(item => {
+      if (!designs[item]) {
+        ids.push(item)
+      }
+    })
+
+    errors.value = ids
+    if (ids.length) {
+      return ids.map(id => {
+        const item = getItem(id)
+        return `[${item?.name}]のデザインを選択してください!`
+      })
+    }
+    return []
+  }
+
+  function setDesignData(key: number, value: number) {
+    selectedStore.setDesign(key, value)
+    selectedStore.setCurrentType(key)
+  }
+
+  return { errors, selected, currentType, checkError, getItem, getItems, setDesignData, getDefaultDesign, getDesign, getDesigns, getTypeName, designLog }
 })

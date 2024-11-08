@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { useFabricsStore } from '@/stores/fabrics'
-import { useSelectedStore } from '@/stores/selected'
-import { nextTick, onMounted, useTemplateRef } from 'vue'
+import { nextTick, onMounted, useTemplateRef, watch } from 'vue'
 
 const listRef = useTemplateRef<HTMLLIElement>('fabric')
-const { fabrics } = useFabricsStore()
-const { selected, setSelected } = useSelectedStore()
+const store = useFabricsStore()
 
 onMounted(async () => {
   if (listRef.value) {
@@ -17,20 +15,47 @@ onMounted(async () => {
         block: 'center',
         inline: 'center',
       })
+    } else {
+      scrollToTop()
     }
   }
 })
+
+watch(
+  () => store.error,
+  async nextVal => {
+    if (nextVal && listRef.value) {
+      const item = listRef.value.querySelector('.fabric')
+      if (item) {
+        await nextTick()
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+    }
+  }
+)
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
+}
 </script>
 
 <template>
   <section class="fabrics">
     <section class="fabric-actions"></section>
     <ul ref="fabric" class="scroll-container list-reset fabric-list">
-      <li v-for="fabric in fabrics" :key="fabric.id">
+      <li v-for="fabric in store.fabrics" :key="fabric.id">
         <button
           class="fabric button-reset"
-          :class="{ 'selected-item': fabric.id == selected.fabric }"
-          @click="setSelected('fabric', fabric.id)"
+          :class="{ 'selected-item': fabric.id == store.selected }"
+          @click="store.setSelected('fabric', fabric.id)"
         >
           <figure class="figure-reset">
             <img :src="`/fabrics/${fabric.id}.jpg`" alt="fabric image" />

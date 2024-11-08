@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useOptionsStore } from '@/stores/options'
-import { useSelectedStore } from '@/stores/selected'
 import {
   nextTick,
   onBeforeUnmount,
@@ -11,7 +10,6 @@ import {
 } from 'vue'
 
 const store = useOptionsStore()
-const selected = useSelectedStore()
 const listRef = useTemplateRef<HTMLLIElement>('options')
 
 const mounted = ref(false)
@@ -21,16 +19,16 @@ const mackinWidth = ref<number | null>(null)
 onMounted(() => {
   scrollToTop()
   // store.getCustomOptions()
-  if (selected.selected.options[44]) {
-    name.value = String(selected.selected.options[44])
+  if (store.selected[44]) {
+    name.value = String(store.selected[44])
   }
-  if (selected.selected.options[63]) {
-    mackinWidth.value = Number(selected.selected.options[63])
+  if (store.selected[63]) {
+    mackinWidth.value = Number(store.selected[63])
   }
 
-  Object.entries(selected.selected).forEach(([key, value]) => {
+  Object.entries(store.selected).forEach(([key, value]) => {
     if (value == undefined) {
-      delete selected.selected.options[Number(key)]
+      store.deleteOption(key)
     }
   })
 
@@ -62,14 +60,14 @@ watch(
 
 watch(name, nextVal => {
   if (nextVal) {
-    selected.setOption(44, nextVal)
+    store.setOption(44, nextVal)
   } else {
-    delete selected.selected.options[44]
+    store.deleteOption(44)
   }
 })
 
 watch(
-  () => selected.selected.options[31],
+  () => store.selected[31],
   (nextVal, prevVal) => {
     if (!(nextVal && prevVal)) {
       name.value = ''
@@ -78,24 +76,24 @@ watch(
 )
 
 watch(
-  () => selected.selected.options[45],
+  () => store.selected[45],
   nextVal => {
     if (!nextVal) {
-      delete selected.selected.options[46]
+      store.deleteOption(46)
     }
   }
 )
 
 watch(mackinWidth, nextVal => {
   if (nextVal) {
-    selected.selected.options[63] = nextVal
+    store.selected[63] = nextVal
   } else {
-    delete selected.selected.options[63]
+    store.deleteOption(63)
   }
 })
 
 watch(
-  () => selected.selected.options[25],
+  () => store.selected[25],
   nextVal => {
     if (nextVal == 2) {
       mackinWidth.value = 2.5
@@ -161,10 +159,9 @@ function scrollToTop() {
                   <button
                     class="button-reset option-item"
                     :class="{
-                      'selected-item':
-                        selected.selected.options[option.id] == item.code,
+                      'selected-item': store.selected[option.id] == item.code,
                     }"
-                    @click="selected.setOption(option.id, item.code)"
+                    @click="store.setOption(option.id, item.code)"
                     :data-code="item.code"
                   >
                     <figure v-if="item.image" class="figure-reset">
@@ -182,16 +179,15 @@ function scrollToTop() {
               <ul
                 class="list-reset option-item-list padding-top"
                 :class="{ error: store.isError(46) }"
-                v-if="option.id == 45 && selected.selected.options[option.id]"
+                v-if="option.id == 45 && store.selected[option.id]"
               >
                 <li v-for="item in store.amfStitches" :key="item.id">
                   <button
                     class="button-reset option-item"
                     :class="{
-                      'selected-item':
-                        selected.selected.options[46] == item.code,
+                      'selected-item': store.selected[46] == item.code,
                     }"
-                    @click="selected.setOption(46, item.code)"
+                    @click="store.setOption(46, item.code)"
                     :data-code="item.code"
                   >
                     <figure v-if="item.image" class="figure-reset">
@@ -209,16 +205,14 @@ function scrollToTop() {
               <div
                 class="input-container"
                 :class="{ 'error-item': store.isError(44) }"
-                v-if="option.id == 31 && selected.selected.options[option.id]"
+                v-if="option.id == 31 && store.selected[option.id]"
               >
                 <h6>文字を入力してください</h6>
                 <input id="textInput" type="text" v-model="name" />
               </div>
               <div
                 class="select-container"
-                v-if="
-                  option.id == 25 && selected.selected.options[option.id] == 2
-                "
+                v-if="option.id == 25 && store.selected[option.id] == 2"
               >
                 <select v-model="mackinWidth">
                   <option

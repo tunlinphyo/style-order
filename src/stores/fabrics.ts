@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useSelectedStore } from './selected';
 
 export interface Fabric {
   id: number;
@@ -9,6 +10,11 @@ export interface Fabric {
 }
 
 export const useFabricsStore = defineStore('fabrics', () => {
+  const selectedStore = useSelectedStore()
+
+  const error = ref(false)
+  const selected = computed(() => selectedStore.selected.fabric)
+
   const fabrics: Fabric[] = [
     {
       id: 7,
@@ -72,5 +78,12 @@ export const useFabricsStore = defineStore('fabrics', () => {
     },
   ]
 
-  return { fabrics }
+  function checkError() {
+    error.value = !selectedStore.selected.fabric
+
+    if (error.value) return '[生地]を選択してください!'
+    return ''
+  }
+
+  return { fabrics, error, selected, checkError, setSelected: selectedStore.setSelected }
 })

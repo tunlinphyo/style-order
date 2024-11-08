@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { buttonList, liningList } from './simu-data'
-import { LININGS } from './data';
+import { liningList } from './simu-data'
+import { useSelectedStore } from './selected';
 
 export interface Lining {
   id: number;
@@ -15,20 +15,9 @@ export interface Lining {
 
 export const useLiningsStore = defineStore('linings', () => {
   const linings: Lining[] = liningList
-
-  // Object.values(LININGS).forEach((value, index) => {
-  //   linings.push({
-  //     id: index + 1,
-  //     name: value.option_field,
-  //     option: Number(value.option_id),
-  //     code: Number(value.option_code),
-  //     image: value.option_image,
-  //     itemid: value.item_id,
-  //     sortNo: index
-  //   })
-  // })
-  //   const linings: Lining[] = buttonList
-  // const buttons = computed(() => list)
+  const selectedStore = useSelectedStore()
+  const error = ref(false)
+  const selected = computed(() => selectedStore.selected.lining)
 
   function getImageUrl(img: string) {
     return `https://style-order.taka-q.com/sandbox/upload/save_image/${img}`
@@ -38,5 +27,12 @@ export const useLiningsStore = defineStore('linings', () => {
     return linings.find(item => item.code == code)
   }
 
-  return { linings, getImageUrl, getLining }
+  function checkError() {
+    error.value = !selectedStore.selected.lining
+
+    if (error.value) return '[裏地]を選択してください!'
+    return ''
+  }
+
+  return { linings, selected, error, checkError, getImageUrl, setSelected: selectedStore.setSelected, getLining }
 })

@@ -1,44 +1,59 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
+import { nextTick, onMounted, useTemplateRef, watch } from 'vue'
 import { useCourseStore } from '@/stores/courses'
-import { useSelectedStore } from '@/stores/selected'
 
 const listRef = useTemplateRef<HTMLLIElement>('courses')
-const { getCourses } = useCourseStore()
-const { selected, setSelected } = useSelectedStore()
+const store = useCourseStore()
 
 onMounted(() => {
   if (listRef.value) {
     const item = listRef.value.querySelector('.selected-item')
     if (item) {
-      // const offset = window.innerHeight - 250
-      // const elementPosition = item.getBoundingClientRect().top + window.scrollY
-      // const offsetPosition = elementPosition - offset
-
-      // window.scrollTo({
-      //   top: offsetPosition,
-      //   behavior: 'smooth',
-      // })
       item.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'center',
       })
-      // const offset = 20
-      // window.scrollBy(0, offset)
+    } else {
+      scrollToTop()
     }
   }
 })
+
+watch(
+  () => store.error,
+  async nextVal => {
+    if (nextVal && listRef.value) {
+      const item = listRef.value.querySelector('.course')
+      if (item) {
+        await nextTick()
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+    }
+  }
+)
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
+}
 </script>
 
 <template>
   <section class="courses">
     <ul ref="courses" class="scroll-container list-reset course-list">
-      <li v-for="course in getCourses(selected.gender)" :key="course.id">
+      <li v-for="course in store.getCourses()" :key="course.id">
         <button
           class="course button-reset"
-          :class="{ 'selected-item': course.id == selected.course }"
-          @click="setSelected('course', course.id)"
+          :class="{ 'selected-item': course.id == store.selected }"
+          @click="store.setSelected('course', course.id)"
         >
           <figure class="figure-reset">
             <img :src="course.image" alt="course image" />

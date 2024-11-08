@@ -20,7 +20,7 @@ interface Selected {
 }
 
 interface Query {
-  [key: string]: any;
+  [key: string]: string | number;
 }
 
 export type SelectedName = 'gender' | 'fabric' | 'course' | 'button' | 'lining'
