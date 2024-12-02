@@ -114,7 +114,6 @@ function scrollToTop() {
 <style scoped>
 .confirm {
   width: 100%;
-  padding-block-end: 20px;
 }
 
 .item {

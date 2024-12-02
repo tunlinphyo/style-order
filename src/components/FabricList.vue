@@ -45,6 +45,14 @@ function scrollToTop() {
     behavior: 'smooth',
   })
 }
+
+function formatPrice(value: number) {
+  if (typeof value !== 'number') return value
+  return new Intl.NumberFormat('ja-JP', {
+    style: 'currency',
+    currency: 'JPY',
+  }).format(value)
+}
 </script>
 
 <template>
@@ -63,7 +71,7 @@ function scrollToTop() {
           </figure>
           <div class="fabric-detail">
             <div class="code">{{ fabric.code }}</div>
-            <div class="price">{{ fabric.price }}</div>
+            <div class="price">{{ formatPrice(fabric.price) }}</div>
           </div>
         </button>
       </li>

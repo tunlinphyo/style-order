@@ -26,7 +26,7 @@ function updateGender(gender: number) {
   <section class="container">
     <h1>Style Order Suit</h1>
     <p class="message">
-      Please, choose your favorite suit from the simulator .
+      シミュレーターから、<br />お好みのスーツをお選びください。
     </p>
 
     <ul class="gender-list list-reset">
