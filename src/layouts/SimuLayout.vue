@@ -147,7 +147,7 @@ main {
   }
 }
 
-@media (min-width: 768px) and (max-width: 992px) {
+@media (min-width: 767px) and (max-width: 992px) {
   .object {
     aspect-ratio: 1.2 / 1;
   }

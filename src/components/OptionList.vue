@@ -317,6 +317,7 @@ function scrollToTop() {
 }
 .option-image img {
   width: 100%;
+  max-width: 400px;
   border-radius: calc(var(--border-radius) * 0.5);
 }
 .option-item img {
@@ -327,6 +328,7 @@ function scrollToTop() {
 }
 
 .option-detail {
+  max-width: 600px;
   padding-block-start: 5px;
 }
 
