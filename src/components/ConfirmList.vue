@@ -204,7 +204,7 @@ footer {
   gap: 2px;
 }
 .card-list .cell {
-  padding: 8px 10px;
+  padding: 10px;
 }
 .card-list:nth-child(odd) .value {
   background-color: var(--white);
@@ -215,8 +215,8 @@ footer {
 .card-list .label {
   font-weight: 900;
 
-  background-color: var(--custom-blue);
-  color: var(--white);
+  background-color: var(--white);
+  /* color: var(--black); */
 }
 
 .card-list:first-child .label {
